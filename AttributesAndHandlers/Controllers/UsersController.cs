@@ -1,13 +1,18 @@
 ﻿using AttributesAndHandlers.DTOs;
 using AttributesAndHandlers.IJWTAuthentication;
+using AttributesAndHandlers.Security;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Principal;
+using System.Text;
 using System.Threading.Tasks;
 
 
@@ -55,7 +60,7 @@ namespace AttributesAndHandlers.Controllers
                 new Claim("Mahyar.Says","Hi There")
             };
 
-            var mahyarIdentity = new ClaimsIdentity(mahyarClaims, "Mahyar Identity");
+            var mahyarIdentity = new ClaimsIdentity(mahyarClaims, "Mahyar.Cookie");
 
             var userPrincipal = new ClaimsPrincipal(new[] { mahyarIdentity });
 
@@ -108,7 +113,7 @@ namespace AttributesAndHandlers.Controllers
         }
 
         [HttpGet]
-        [Route("Values")]
+        [Route("Value")]
         [Authorize(Policy = "Claim.Mahyar")] // Policy Base By Cookie // Claim Requirements By Authorization Handler
         public IEnumerable<string> GetPolicy()
         {
@@ -124,9 +129,10 @@ namespace AttributesAndHandlers.Controllers
         }
 
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult Get([FromRoute] int id)
         {
-            return "value";
+            int _id = id;
+            return Ok(_id);
         }
 
         [HttpPost]
@@ -145,6 +151,20 @@ namespace AttributesAndHandlers.Controllers
         public void Delete(int id)
         {
 
+        }
+        [HttpPost] // Login
+        public IActionResult Login(UserDTO dto)
+        {
+            var user = _userManager.FindByNameAsync(dto.Username).Result;
+            if (user.PasswordHash == HashGenerator.GenerateHash(dto.Password))
+            {
+                string token = TokenGenerator.GenerateEncodedToken(user);
+                return Ok(token);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
     }
 }

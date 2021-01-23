@@ -1,3 +1,4 @@
+using AttributesAndHandlers.ASP.NET_Core_Identity_authentication;
 using AttributesAndHandlers.Authorization;
 using AttributesAndHandlers.Data;
 using AttributesAndHandlers.IJWTAuthentication;
@@ -50,7 +51,7 @@ namespace AttributesAndHandlers
 
             services.ConfigureApplicationCookie(x =>
             {
-                x.Cookie.Name = "Identity.Cookie";
+                x.Cookie.Name = "Mahyar.Cookie";
                 x.LoginPath = "/api/Users/cookieAuth";
             });
 
@@ -85,25 +86,35 @@ namespace AttributesAndHandlers
 
             services.AddAuthorization(x =>
             {
-                //var auth = new AuthorizationPolicyBuilder();
-                //var authPolicy = auth
-                //.RequireAuthenticatedUser()
-                //.RequireClaim(ClaimTypes.DateOfBirth) //ForExample
-                //.Build();
+                var auth = new AuthorizationPolicyBuilder();
+                var authPolicy = auth
+                .RequireAuthenticatedUser()
+                .RequireClaim(ClaimTypes.Role) //ForExample
+                .Build();
 
                 //x.DefaultPolicy = authPolicy;
                 x.AddPolicy("Admin", role =>
                     {
                         role.RequireClaim(ClaimTypes.Role, "Admin");
-                        role.RequireRole(ClaimTypes.Role,"Admin");
+                        role.RequireRole(ClaimTypes.Role, "Admin");
                         role.RequireRole("Admin"); // Role Base
                     });
                 x.AddPolicy("Claim.Mahyar", policy =>
                   {
-                      policy.AddRequirements(new CustomRequireClaim(ClaimTypes.DateOfBirth)); //Custom Claims for Policy Base
+                      policy.AddRequirements(new CustomRequireClaim(ClaimTypes.Name)); //Custom Claims for Policy Base
                   });
             });
+            //custom Claim
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Developer", policy =>
+                policy.RequireClaim("IsDeveloper", "true"));
+            });
+
             services.AddScoped<IAuthorizationHandler, CustomRequireClaimHandler>();
+
+            services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, ApplicationClaimsIdentityFactory>();
+
             services.AddControllers();
         }
 
