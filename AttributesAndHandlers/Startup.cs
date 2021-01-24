@@ -1,5 +1,6 @@
 using AttributesAndHandlers.ASP.NET_Core_Identity_authentication;
 using AttributesAndHandlers.Authorization;
+using AttributesAndHandlers.AuthorizationPolicyProvider;
 using AttributesAndHandlers.Data;
 using AttributesAndHandlers.IJWTAuthentication;
 using AttributesAndHandlers.JWTAuthentication;
@@ -104,7 +105,7 @@ namespace AttributesAndHandlers
                       policy.AddRequirements(new CustomRequireClaim(ClaimTypes.Name)); //Custom Claims for Policy Base
                   });
             });
-            //custom Claim
+            //custom Claim By Identity
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("Developer", policy =>
@@ -114,6 +115,8 @@ namespace AttributesAndHandlers
             services.AddScoped<IAuthorizationHandler, CustomRequireClaimHandler>();
 
             services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, ApplicationClaimsIdentityFactory>();
+
+            services.AddSingleton<IAuthorizationPolicyProvider, NamePolicyProvider>();
 
             services.AddControllers();
         }
