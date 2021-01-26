@@ -113,8 +113,10 @@ namespace AttributesAndHandlers.Controllers
         }
 
         [HttpGet]
-        [Route("Value")]
-        [Authorize(Policy = "Claim.Mahyar")] // Policy Base By Cookie // Claim Requirements By Authorization Handler
+        //[Route("Value")]
+        //[Authorize(Policy = "Claim.Mahyar")] // Policy Base By Cookie // Claim Requirements By Authorization Handler
+        [Route("Get")]
+        [Authorize(Policy = "GetRoute")]
         public IEnumerable<string> GetPolicy()
         {
             return new string[] { "value1", "value2" };

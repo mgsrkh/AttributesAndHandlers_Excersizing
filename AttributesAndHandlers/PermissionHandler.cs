@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,48 +12,16 @@ namespace AttributesAndHandlers
     {
         public Task HandleAsync(AuthorizationHandlerContext context)
         {
-            var pendingRequirements = context.PendingRequirements.ToList();
+            //string methodName = System.Reflection.MethodBase.GetCurrentMethod().Name;
 
-            foreach (var requirement in pendingRequirements)
+
+            var routeList = new List<string>() { "Get", "Post", "Put","Patch" };
+            if (context.HasSucceeded)
             {
-                if (requirement != null)
-                {
-                    if (IsOwner(context.User, context.Resource) ||
-                        IsSponsor(context.User, context.Resource))
-                    {
-                        context.Succeed(requirement);
-                    }
-                }
-                else
-                {
-                    if (IsOwner(context.User, context.Resource))
-                    {
-                        context.Succeed(requirement);
-                    }
-                }
+                context.User.Claims.Any(x => x.Type == routeList.ToString()); 
+                context.User.HasClaim(x => x.Type == "Routes");
             }
             return Task.CompletedTask;
-        }
-
-        private bool IsOwner(ClaimsPrincipal user, object resource)
-        {
-            var userClaim = user.FindFirst(ClaimTypes.Name);
-            if (userClaim != null)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        private bool IsSponsor(ClaimsPrincipal user, object resource)
-        {
-            var userClaim = user.FindFirst(ClaimTypes.Name);
-
-            if (userClaim != null)
-            {
-                return true;
-            }
-            return false;
         }
     }
 }

@@ -20,15 +20,18 @@ namespace AttributesAndHandlers.JWTAuthentication
 
         IDictionary<string, string> users = new Dictionary<string, string>
         {
-            { "test1", "password1" }, 
+            { "Get", "password1" }, 
             //{ "test2", "password2" }
         };
         public string Authenticate(string username, string password)
         {
+
             if (!users.Any(u => u.Key == username && u.Value == password))
             {
                 return null;
             }
+
+            var routeList = new List<string>() { "Get", "Post", "Put", "Patch" };
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(tokenKey);
@@ -36,7 +39,8 @@ namespace AttributesAndHandlers.JWTAuthentication
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name,username)
+                   // new Claim("Get",username)
+                   new Claim("Routes",routeList[0])
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(

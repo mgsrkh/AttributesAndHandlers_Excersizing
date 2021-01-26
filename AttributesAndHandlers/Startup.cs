@@ -85,38 +85,48 @@ namespace AttributesAndHandlers
             });
             services.AddSingleton<IJWTAuthenticationManager>(new JWTAuthenticationManager(tokenKey));
 
+            //services.AddAuthorization(x =>
+            //{
+            //    var auth = new AuthorizationPolicyBuilder();
+            //    var authPolicy = auth
+            //    .RequireAuthenticatedUser()
+            //    .RequireClaim(ClaimTypes.Role) //ForExample
+            //    .Build();
+
+            //    //x.DefaultPolicy = authPolicy;
+            //    x.AddPolicy("Admin", role =>
+            //        {
+            //            role.RequireClaim(ClaimTypes.Role, "Admin");
+            //            role.RequireRole(ClaimTypes.Role, "Admin");
+            //            role.RequireRole("Admin"); // Role Base
+            //        });
+            //    x.AddPolicy("Claim.Mahyar", policy =>
+            //      {
+            //          policy.AddRequirements(new CustomRequireClaim(ClaimTypes.Name)); //Custom Claims for Policy Base
+            //      });
+            //});
+            ////custom Claim By Identity
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("Developer", policy =>
+            //    policy.RequireClaim("IsDeveloper", "true"));
+            //});
+
+            //services.AddScoped<IAuthorizationHandler, CustomRequireClaimHandler>();
+
+            //services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, ApplicationClaimsIdentityFactory>();
+
+            //services.AddSingleton<IAuthorizationPolicyProvider, NamePolicyProvider>();
+
+            //First approach for route
+            var routeList = new List<string>() { "Get", "Post", "Put", "Patch" };
             services.AddAuthorization(x =>
             {
-                var auth = new AuthorizationPolicyBuilder();
-                var authPolicy = auth
-                .RequireAuthenticatedUser()
-                .RequireClaim(ClaimTypes.Role) //ForExample
-                .Build();
-
-                //x.DefaultPolicy = authPolicy;
-                x.AddPolicy("Admin", role =>
-                    {
-                        role.RequireClaim(ClaimTypes.Role, "Admin");
-                        role.RequireRole(ClaimTypes.Role, "Admin");
-                        role.RequireRole("Admin"); // Role Base
-                    });
-                x.AddPolicy("Claim.Mahyar", policy =>
-                  {
-                      policy.AddRequirements(new CustomRequireClaim(ClaimTypes.Name)); //Custom Claims for Policy Base
-                  });
-            });
-            //custom Claim By Identity
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("Developer", policy =>
-                policy.RequireClaim("IsDeveloper", "true"));
+                x.AddPolicy("GetRoute", policy =>
+                policy.RequireClaim("Routes", routeList[0]));
             });
 
-            services.AddScoped<IAuthorizationHandler, CustomRequireClaimHandler>();
-
-            services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, ApplicationClaimsIdentityFactory>();
-
-            services.AddSingleton<IAuthorizationPolicyProvider, NamePolicyProvider>();
+            services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
             services.AddControllers();
         }
