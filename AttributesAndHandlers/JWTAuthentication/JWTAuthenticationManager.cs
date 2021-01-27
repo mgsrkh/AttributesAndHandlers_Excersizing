@@ -40,7 +40,8 @@ namespace AttributesAndHandlers.JWTAuthentication
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                    // new Claim("Get",username)
-                   new Claim("Routes",routeList[0])
+                   new Claim("Routes", routeList[0]),
+                   new Claim("DateOfJoining","1398-02-02")
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(

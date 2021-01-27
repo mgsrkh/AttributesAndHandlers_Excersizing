@@ -1,4 +1,5 @@
-﻿using AttributesAndHandlers.DTOs;
+﻿using AttributesAndHandlers.Authorization_attributes;
+using AttributesAndHandlers.DTOs;
 using AttributesAndHandlers.IJWTAuthentication;
 using AttributesAndHandlers.Security;
 using Microsoft.AspNetCore.Authentication;
@@ -117,9 +118,9 @@ namespace AttributesAndHandlers.Controllers
         //[Authorize(Policy = "Claim.Mahyar")] // Policy Base By Cookie // Claim Requirements By Authorization Handler
         [Route("Get")]
         [Authorize(Policy = "GetRoute")]
-        public IEnumerable<string> GetPolicy()
+        public string GetPolicy()
         {
-            return new string[] { "value1", "value2" };
+            return "The Result After Authorization By IAuthorizationHandler";
         }
 
         [HttpGet]
@@ -167,6 +168,24 @@ namespace AttributesAndHandlers.Controllers
             {
                 return BadRequest();
             }
+        }
+        [HttpGet("a")]
+        [MinimumTimeSpendAuthorize(180)]
+        public IActionResult TestMethod2()
+        {
+            return Ok("a");
+        }
+        [HttpGet("b")]
+        [MinimumTimeSpendAuthorize(365)]
+        public IActionResult TestMethod1()
+        {
+            return Ok("b");
+        }
+        [HttpGet("c")]
+        [MinimumTimeSpendAuthorize(10)]
+        public IActionResult TestMethod3()
+        {
+            return Ok("b");
         }
     }
 }

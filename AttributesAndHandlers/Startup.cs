@@ -128,6 +128,12 @@ namespace AttributesAndHandlers
 
             services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
+            services.AddTransient<IAuthorizationPolicyProvider, MinimumTimeSpendPolicyProvider>();
+            services.AddSingleton<IAuthorizationHandler, MinimumTimeSpendHandler>();
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.AddAuthorization();
+
             services.AddControllers();
         }
 
