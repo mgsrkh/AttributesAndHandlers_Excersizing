@@ -23,7 +23,7 @@ namespace AttributesAndHandlers.JWTAuthentication
             { "Get", "password1" }, 
             //{ "test2", "password2" }
         };
-        public string Authenticate(string username, string password)
+        public string Authenticate(string username, string password) 
         {
 
             if (!users.Any(u => u.Key == username && u.Value == password))

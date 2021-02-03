@@ -50,18 +50,18 @@ namespace AttributesAndHandlers
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.ConfigureApplicationCookie(x =>
-            {
-                x.Cookie.Name = "Mahyar.Cookie";
-                x.LoginPath = "/api/Users/cookieAuth";
-            });
+            //services.ConfigureApplicationCookie(x =>
+            //{
+            //    x.Cookie.Name = "Mahyar.Cookie";
+            //    x.LoginPath = "/api/Users/cookieAuth";
+            //});
 
-            services.AddAuthentication("CookieAuth")
-                .AddCookie("CookieAuth", config =>
-                 {
-                     config.Cookie.Name = "Mahyar.Cookie";
-                     config.LoginPath = "/api/Users/cookieAuth";
-                 });
+            //services.AddAuthentication("CookieAuth")
+            //    .AddCookie("CookieAuth", config =>
+            //     {
+            //         config.Cookie.Name = "Mahyar.Cookie";
+            //         config.LoginPath = "/api/Users/cookieAuth";
+            //     });
 
             var tokenKey = Configuration.GetValue<string>("TokenKey");
             var key = Encoding.ASCII.GetBytes(tokenKey);
